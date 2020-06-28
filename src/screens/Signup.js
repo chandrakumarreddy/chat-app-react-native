@@ -1,5 +1,5 @@
 import React from 'react';
-import {StatusBar, Platform} from 'react-native';
+import {StatusBar, Platform, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import colors from '../utils/colors';
 import Text from '../shared/Text';
@@ -20,9 +20,22 @@ export default function Signup() {
             <Title large>Chat App</Title>
           </Cover>
           <Content>
-            <EmailField placeholder={strings.emailPlaceholder} />
-            <PasswordField placeholder={strings.passwordPlaceholder} />
-            <JoinNow>{strings.joinNow}</JoinNow>
+            <EmailField
+              placeholder={strings.emailPlaceholder}
+              onChangeText={() => {}}
+              value=""
+              keyboardType="email-address"
+            />
+            <PasswordField
+              placeholder={strings.passwordPlaceholder}
+              secureTextEntry
+              onChangeText={() => {}}
+              onEndEditing={() => {}}
+              value=""
+            />
+            <JoinNow onPress={() => Alert.alert('hi')}>
+              {strings.joinNow}
+            </JoinNow>
           </Content>
         </Container>
       </DismissKeyboard>
