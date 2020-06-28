@@ -1,5 +1,5 @@
 import React from 'react';
-import {StatusBar, Platform, Alert} from 'react-native';
+import {StatusBar, Platform, Keyboard} from 'react-native';
 import styled from 'styled-components/native';
 import colors from '../utils/colors';
 import Text from '../shared/Text';
@@ -8,8 +8,22 @@ import strings from '../utils/strings';
 import constants from '../utils/constants';
 import DismissKeyboard from '../shared/DismissKeyboard';
 import Button from '../shared/Button';
+import Utility from '../utils/utility';
 
 export default function Signup() {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [emailError, setEmailError] = React.useState('');
+  const validateEmail = text => {
+    if (!Utility.isEmailValid(email)) {
+      return setEmailError('Email is invalid');
+    } else {
+      setEmailError('');
+    }
+  };
+  const handleSubmit = () => {
+    alert('login success');
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -22,18 +36,27 @@ export default function Signup() {
           <Content>
             <EmailField
               placeholder={strings.emailPlaceholder}
-              onChangeText={() => {}}
-              value=""
+              onChangeText={text => {
+                setEmail(text);
+              }}
+              value={email}
               keyboardType="email-address"
+              onEndEditing={validateEmail}
             />
+            {!!emailError && <Error tiny>{emailError}</Error>}
             <PasswordField
               placeholder={strings.passwordPlaceholder}
               secureTextEntry
-              onChangeText={() => {}}
-              onEndEditing={() => {}}
-              value=""
+              onChangeText={text => {
+                setPassword(text);
+              }}
+              value={password}
             />
-            <JoinNow onPress={() => Alert.alert('hi')}>
+            <JoinNow
+              onPress={() => {
+                Keyboard.dismiss();
+                handleSubmit();
+              }}>
               {strings.joinNow}
             </JoinNow>
           </Content>
@@ -68,6 +91,12 @@ const Content = styled.View`
 
 const EmailField = styled(TextInput)`
   width: ${constants.screenWidth - 40}px;
+`;
+
+const Error = styled(Text)`
+  color: red;
+  width: ${constants.screenWidth - 40}px;
+  padding: 10px 20px 0 20px;
 `;
 
 const PasswordField = styled(TextInput)`
