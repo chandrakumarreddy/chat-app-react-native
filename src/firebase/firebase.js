@@ -1,6 +1,7 @@
-import firebase from 'firebase/app';
-import 'firebase/database';
-import 'firebase/auth';
+import firebase from 'firebase';
+import 'firebase/firestore';
+require('firebase/auth');
+
 import {
   apiKey,
   authDomain,
@@ -23,7 +24,9 @@ const firebaseConfig = {
   measurementId,
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 export const firestore = firebase.firestore();
 

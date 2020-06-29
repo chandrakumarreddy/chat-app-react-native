@@ -4,7 +4,12 @@ import colors from '../utils/colors';
 
 export default function TextInput(props) {
   return (
-    <Input {...props} placeholderTextColor={colors.white} autoCorrect={false} />
+    <Input
+      {...props}
+      placeholderTextColor={colors.white}
+      autoCorrect={false}
+      autoCapitalize="none"
+    />
   );
 }
 

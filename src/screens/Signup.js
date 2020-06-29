@@ -9,11 +9,13 @@ import constants from '../utils/constants';
 import DismissKeyboard from '../shared/DismissKeyboard';
 import Button from '../shared/Button';
 import Utility from '../utils/utility';
+import firebase from '../firebase/firebase';
 
-export default function Signup() {
+export default function Signup({navigation}) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [emailError, setEmailError] = React.useState('');
+  const [error, setError] = React.useState('');
   const validateEmail = text => {
     if (!Utility.isEmailValid(email)) {
       return setEmailError('Email is invalid');
@@ -21,8 +23,39 @@ export default function Signup() {
       setEmailError('');
     }
   };
-  const handleSubmit = () => {
-    alert('login success');
+  const handleSubmit = async () => {
+    if (!emailError || !password) {
+      try {
+        firebase
+          .auth()
+          .signInWithEmailAndPassword(email, password)
+          .then(() => {
+            navigation.reset({
+              index: 0,
+              routes: [{name: 'Groups'}],
+            });
+          })
+          .catch(err => {
+            if (err.code === 'auth/wrong-password') {
+              return setError('Invalid credentails');
+            }
+            firebase
+              .auth()
+              .createUserWithEmailAndPassword(email, password)
+              .then(() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{name: 'Groups'}],
+                });
+              })
+              .catch(err1 => {
+                setError(err1.message);
+              });
+          });
+      } catch (err2) {
+        setError(err2.message);
+      }
+    }
   };
   return (
     <KeyboardAvoidingView
@@ -32,6 +65,7 @@ export default function Signup() {
           <StatusBar barStyle="light-content" />
           <Cover>
             <Title large>Chat App</Title>
+            <Error small>{error}</Error>
           </Cover>
           <Content>
             <EmailField
@@ -39,6 +73,7 @@ export default function Signup() {
               onChangeText={text => {
                 setEmail(text);
               }}
+              autoCa
               value={email}
               keyboardType="email-address"
               onEndEditing={validateEmail}
