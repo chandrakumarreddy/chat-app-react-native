@@ -1,5 +1,5 @@
 import React from 'react';
-import {StatusBar, Platform, Keyboard} from 'react-native';
+import {StatusBar, Platform} from 'react-native';
 import styled from 'styled-components/native';
 import colors from '../utils/colors';
 import Text from '../shared/Text';
@@ -87,13 +87,7 @@ export default function Signup({navigation}) {
               }}
               value={password}
             />
-            <JoinNow
-              onPress={() => {
-                Keyboard.dismiss();
-                handleSubmit();
-              }}>
-              {strings.joinNow}
-            </JoinNow>
+            <JoinNow onPress={handleSubmit}>{strings.joinNow}</JoinNow>
           </Content>
         </Container>
       </DismissKeyboard>
