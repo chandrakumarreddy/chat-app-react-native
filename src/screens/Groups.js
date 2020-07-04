@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import {firestore} from '../firebase/firebase';
-import {FlatList} from 'react-native-gesture-handler';
+import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 
 import Text from '../shared/Text';
 import colors from '../utils/colors';
@@ -50,16 +50,20 @@ export default function Groups({navigation}) {
     }
   }, []);
   const renderGroup = group => (
-    <Group>
-      <Thumbnail>
-        <GroupIcon
-          source={{
-            uri: group.thumbnail,
-          }}
-        />
-      </Thumbnail>
-      <GroupName small>{group.name}</GroupName>
-    </Group>
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={() => navigation.navigate('Chat')}>
+      <Group>
+        <Thumbnail>
+          <GroupIcon
+            source={{
+              uri: group.thumbnail,
+            }}
+          />
+        </Thumbnail>
+        <GroupName small>{group.name}</GroupName>
+      </Group>
+    </TouchableOpacity>
   );
   return (
     <Container>

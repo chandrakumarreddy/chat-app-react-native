@@ -1,5 +1,5 @@
 import React from 'react';
-import {StatusBar, Platform} from 'react-native';
+import {StatusBar, Platform, Keyboard} from 'react-native';
 import styled from 'styled-components/native';
 import colors from '../utils/colors';
 import Text from '../shared/Text';
@@ -24,6 +24,7 @@ export default function Signup({navigation}) {
     }
   };
   const handleSubmit = async () => {
+    Keyboard.dismiss();
     if (!emailError || !password) {
       try {
         firebase

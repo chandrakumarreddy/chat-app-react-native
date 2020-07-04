@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import {Keyboard, Alert} from 'react-native';
 import TextInput from '../shared/TextInput';
 import Text from '../shared/Text';
 import Button from '../shared/Button';
@@ -7,7 +8,6 @@ import colors from '../utils/colors';
 import constants from '../utils/constants';
 import DismissKeyboard from '../shared/DismissKeyboard';
 import firebase, {firestore} from '../firebase/firebase';
-import {Keyboard} from 'react-native';
 
 export default function AddGroup({navigation}) {
   const [name, setName] = React.useState('');
@@ -33,6 +33,7 @@ export default function AddGroup({navigation}) {
         console.log(error.message);
       }
     }
+    return Alert.alert('Enter valid name');
   };
   return (
     <KeyboardAvoidingView
