@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {Text, Dimensions} from 'react-native';
+import {Text, Dimensions, Alert} from 'react-native';
 import styled from 'styled-components/native';
 import EmojiSelector, {Categories} from 'react-native-emoji-selector';
 
@@ -9,6 +10,8 @@ import firebase, {firestore} from '../firebase/firebase';
 
 export default function Chat({route}) {
   const {groupInfo} = route.params;
+  const currentUser = firebase.auth().currentUser;
+  const [useJoined, setUserJoined] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [messages, setMessages] = React.useState([]);
   const [message, setMessage] = React.useState('');
@@ -22,11 +25,14 @@ export default function Chat({route}) {
     await messageRef.set({
       messageId: messageRef.id,
       message,
-      senderEmail: firebase.auth().currentUser.email,
-      senderId: firebase.auth().currentUser.uid,
+      senderEmail: currentUser.email,
+      senderId: currentUser.uid,
     });
     setMessage('');
   };
+  React.useEffect(() => {
+    isUserJoined();
+  }, []);
   React.useEffect(() => {
     setLoading(true);
     firestore
@@ -42,8 +48,61 @@ export default function Chat({route}) {
       });
     setLoading(false);
   }, []);
+  const isUserJoined = () => {
+    firestore
+      .collection('members')
+      .doc(groupInfo.id)
+      .collection('member')
+      .where('userId', '==', currentUser.uid)
+      .get()
+      .then(function(querySnapshot) {
+        if (querySnapshot.size > 0) {
+          querySnapshot.forEach(function(doc) {
+            if (doc.data() !== null) {
+              setUserJoined(true);
+            } else {
+              joinGroup();
+            }
+          });
+        } else {
+          joinGroup();
+        }
+      })
+      .catch(function(error) {
+        console.log('Error getting documents: ', error);
+      });
+  };
+  const joinGroup = () => {
+    Alert.alert(
+      'Join Group',
+      'Are you sure you want to join',
+      [
+        {
+          text: 'YES',
+          onPress: () => {
+            const memberRef = firestore
+              .collection('members')
+              .doc(groupInfo.id)
+              .collection('member')
+              .doc();
+            memberRef.set({userId: currentUser.uid}).then(() => {
+              Alert.alert('joined successfully');
+              setUserJoined(true);
+            });
+          },
+        },
+        {
+          text: 'NO',
+          onPress: () => {
+            setUserJoined(false);
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
   const renderMessage = item => {
-    if (item.senderId === firebase.auth().currentUser.uid) {
+    if (item.senderId === currentUser.uid) {
       return (
         <Message type="me" key={item.messageId}>
           <Text>{item.message}</Text>
@@ -87,29 +146,33 @@ export default function Chat({route}) {
           }}
         />
       )}
-      <Content>
-        <TouchableOpacity onPress={() => setShowEmoji(true)} activeOpacity={1}>
-          <EmojiIcon>&#128512;</EmojiIcon>
-        </TouchableOpacity>
-        <TextField
-          textBreakStrategy="balanced"
-          textAlignVertical="center"
-          multiline
-          autoCapitalize="none"
-          autoCompleteType="off"
-          value={message}
-          placeholder="Enter message"
-          placeholderTextColor={colors.black}
-          onChangeText={text => setMessage(text)}
-        />
-        <TouchableOpacity activeOpacity={1} onPress={sendMessage}>
-          <SendIcon
-            source={{
-              uri: 'https://img.icons8.com/small/16/000000/filled-sent.png',
-            }}
+      {useJoined && (
+        <Content>
+          <TouchableOpacity
+            onPress={() => setShowEmoji(true)}
+            activeOpacity={1}>
+            <EmojiIcon>&#128512;</EmojiIcon>
+          </TouchableOpacity>
+          <TextField
+            textBreakStrategy="balanced"
+            textAlignVertical="center"
+            multiline
+            autoCapitalize="none"
+            autoCompleteType="off"
+            value={message}
+            placeholder="Enter message"
+            placeholderTextColor={colors.black}
+            onChangeText={text => setMessage(text)}
           />
-        </TouchableOpacity>
-      </Content>
+          <TouchableOpacity activeOpacity={1} onPress={sendMessage}>
+            <SendIcon
+              source={{
+                uri: 'https://img.icons8.com/small/16/000000/filled-sent.png',
+              }}
+            />
+          </TouchableOpacity>
+        </Content>
+      )}
     </Container>
   );
 }
