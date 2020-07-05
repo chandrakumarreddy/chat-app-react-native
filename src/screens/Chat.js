@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {Text, Dimensions, Alert} from 'react-native';
+import {Alert, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
+import LottieView from 'lottie-react-native';
 import EmojiSelector, {Categories} from 'react-native-emoji-selector';
-
-import colors from '../utils/colors';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import firebase, {firestore} from '../firebase/firebase';
 
-export default function Chat({route}) {
+import colors from '../utils/colors';
+import Text from '../shared/Text';
+
+export default function Chat({route, navigation}) {
   const {groupInfo} = route.params;
   const currentUser = firebase.auth().currentUser;
   const [useJoined, setUserJoined] = React.useState(false);
@@ -31,10 +32,12 @@ export default function Chat({route}) {
     setMessage('');
   };
   React.useEffect(() => {
+    navigation.setOptions({
+      title: groupInfo.name,
+    });
     isUserJoined();
   }, []);
   React.useEffect(() => {
-    setLoading(true);
     firestore
       .collection('message')
       .doc(groupInfo.id)
@@ -46,9 +49,9 @@ export default function Chat({route}) {
         });
         setMessages(tempMessages);
       });
-    setLoading(false);
   }, []);
   const isUserJoined = () => {
+    setLoading(true);
     firestore
       .collection('members')
       .doc(groupInfo.id)
@@ -70,6 +73,9 @@ export default function Chat({route}) {
       })
       .catch(function(error) {
         console.log('Error getting documents: ', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   const joinGroup = () => {
@@ -105,7 +111,7 @@ export default function Chat({route}) {
     if (item.senderId === currentUser.uid) {
       return (
         <Message type="me" key={item.messageId}>
-          <Text>{item.message}</Text>
+          <Text color={colors.black}>{item.message}</Text>
         </Message>
       );
     } else {
@@ -119,62 +125,93 @@ export default function Chat({route}) {
             />
           </OtherThumbnail>
           <Message type="other">
-            <Text>{item.message}</Text>
+            <Text color={colors.black}>{item.message}</Text>
           </Message>
         </Other>
       );
     }
   };
-  return (
-    <Container>
-      {loading ? (
-        <Loader size="large" color={colors.uaStudiosGreen} />
-      ) : (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {messages.map(item => renderMessage(item))}
-        </ScrollView>
-      )}
-      {showEmoji && (
-        <EmojiSelector
-          showSearchBar={false}
-          showSectionTitles={false}
-          showHistory={false}
-          category={Categories.symbols}
-          onEmojiSelected={emoji => {
-            setShowEmoji(false);
-            setMessage(msg => msg + emoji);
-          }}
+  if (loading) {
+    return (
+      <Container>
+        <LottieView
+          source={require('../lottefiles/loading.json')}
+          autoPlay
+          loop
         />
-      )}
-      {useJoined && (
-        <Content>
-          <TouchableOpacity
-            onPress={() => setShowEmoji(true)}
-            activeOpacity={1}>
-            <EmojiIcon>&#128512;</EmojiIcon>
-          </TouchableOpacity>
-          <TextField
-            textBreakStrategy="balanced"
-            textAlignVertical="center"
-            multiline
-            autoCapitalize="none"
-            autoCompleteType="off"
-            value={message}
-            placeholder="Enter message"
-            placeholderTextColor={colors.black}
-            onChangeText={text => setMessage(text)}
+      </Container>
+    );
+  } else if (useJoined) {
+    return (
+      <Container>
+        {loading ? (
+          <Loader size="large" color={colors.uaStudiosGreen} />
+        ) : (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {messages.map(item => renderMessage(item))}
+          </ScrollView>
+        )}
+        {showEmoji && (
+          <EmojiSelector
+            showSearchBar={false}
+            showSectionTitles={false}
+            showHistory={false}
+            category={Categories.symbols}
+            onEmojiSelected={emoji => {
+              setShowEmoji(false);
+              setMessage(msg => msg + emoji);
+            }}
           />
-          <TouchableOpacity activeOpacity={1} onPress={sendMessage}>
-            <SendIcon
-              source={{
-                uri: 'https://img.icons8.com/small/16/000000/filled-sent.png',
-              }}
+        )}
+        {useJoined && (
+          <Content>
+            <TouchableOpacity
+              onPress={() => setShowEmoji(true)}
+              activeOpacity={1}>
+              <EmojiIcon>&#128512;</EmojiIcon>
+            </TouchableOpacity>
+            <TextField
+              textBreakStrategy="balanced"
+              textAlignVertical="center"
+              multiline
+              autoCapitalize="none"
+              autoCompleteType="off"
+              value={message}
+              placeholder="Enter message"
+              placeholderTextColor={colors.black}
+              onChangeText={text => setMessage(text)}
             />
-          </TouchableOpacity>
-        </Content>
-      )}
-    </Container>
-  );
+            <TouchableOpacity activeOpacity={1} onPress={sendMessage}>
+              <SendIcon
+                source={{
+                  uri: 'https://img.icons8.com/small/16/000000/filled-sent.png',
+                }}
+              />
+            </TouchableOpacity>
+          </Content>
+        )}
+      </Container>
+    );
+  } else {
+    return (
+      <Container>
+        <LotteContainer>
+          <LottieView
+            source={require('../lottefiles/join-chat.json')}
+            autoPlay
+            loop
+          />
+        </LotteContainer>
+        <Description tiny>
+          When you are part of a group, you meet several others who hear your
+          goals – and can encourage you to stay motivated to reach them. Many
+          times, the group setting can give more natural encouragement,
+          motivation, and advice than could ever happen in an individual
+          counseling appointment.
+        </Description>
+      </Container>
+    );
+  }
 }
 
 const Loader = styled.ActivityIndicator`
@@ -190,6 +227,17 @@ const Icon = styled.Image`
 
 const Container = styled.SafeAreaView`
   flex: 1;
+`;
+
+const LotteContainer = styled.SafeAreaView`
+  width: 100%;
+  height: 50%;
+`;
+
+const Description = styled(Text)`
+  margin: 32px;
+  color: ${colors.black};
+  font-weight: 300;
 `;
 
 const ScrollView = styled.ScrollView`
@@ -235,7 +283,7 @@ const Content = styled.View`
   border-top-right-radius: 25px;
   border-width: 1px;
   border-color: ${colors.lighishGray};
-  width: ${Dimensions.get('window').width}px;
+  width: 100%;
   bottom: 30px;
   z-index: 1;
   align-items: center;
