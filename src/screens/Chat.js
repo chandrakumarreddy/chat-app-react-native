@@ -34,7 +34,7 @@ export default function Chat() {
       <Content>
         <TextField
           placeholder="Enter message"
-          placeholderTextColor={colors.smoke}
+          placeholderTextColor={colors.black}
         />
         <SendIcon
           source={{
@@ -100,7 +100,9 @@ const Message = styled.View`
 
 const TextField = styled.TextInput`
   border-color: ${colors.lighishGray};
-  height: 40px;
+  height: 50px;
+  padding-left: 20px;
+  border-radius: 25px;
   border-width: 1px;
   align-self: stretch;
 `;
@@ -109,8 +111,7 @@ const Content = styled.View`
   position: absolute;
   position: relative;
   width: ${Dimensions.get('window').width}px;
-  bottom: 20px;
-  padding: 0 10px;
+  bottom: 0px;
   align-items: center;
 `;
 
@@ -118,6 +119,6 @@ const SendIcon = styled.Image`
   width: 30px;
   height: 30px;
   position: absolute;
-  top: 5px;
+  top: 10px;
   right: 20px;
 `;
