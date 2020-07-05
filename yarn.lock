@@ -3038,6 +3038,11 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
+emoji-datasource@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/emoji-datasource/-/emoji-datasource-5.0.1.tgz#31eaaff7caa6640929327b4f4ff66f2bf313df0a"
+  integrity sha512-RXokuCv4o8RFLiigN1skAdZwJuJWqtBvcK3GVKpvAL/7BeH95enmKsli7cG8YZ85RTjyEe3+GAdpJJOV43KLKQ==
+
 emoji-regex@^7.0.1:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"
@@ -5967,6 +5972,13 @@ react-native-dotenv@^0.2.0:
   integrity sha1-MRVRy2o1o9z+3mSL3tVcDj7OV50=
   dependencies:
     babel-plugin-dotenv "0.1.1"
+
+react-native-emoji-selector@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/react-native-emoji-selector/-/react-native-emoji-selector-0.1.9.tgz#b6305e952790736c89fe5ae45b2f8a9c6ec6d256"
+  integrity sha512-JCDyhgGOtwIeF2SWG6eXsB7r++RNRcRNW9cUMCVgMEz9Otr9sdWnmY1otoNDiVeP6icINcjvSqSxpw1zpwhFrQ==
+  dependencies:
+    emoji-datasource "^5.0.1"
 
 react-native-gesture-handler@^1.6.1:
   version "1.6.1"

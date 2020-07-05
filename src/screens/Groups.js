@@ -7,6 +7,7 @@ import Text from '../shared/Text';
 import colors from '../utils/colors';
 
 export default function Groups({navigation}) {
+  const [loader, setLoader] = React.useState(false);
   const [groups, setGroups] = React.useState([]);
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -37,6 +38,7 @@ export default function Groups({navigation}) {
   }, [navigation]);
   React.useEffect(() => {
     try {
+      setLoader(true);
       firestore.collection('groups').onSnapshot(function(querySnapshot) {
         const tempGroups = [];
         querySnapshot.forEach(function(doc) {
@@ -44,15 +46,16 @@ export default function Groups({navigation}) {
           tempGroups.push({name: groupName, id: groupId, thumbnail});
         });
         setGroups(tempGroups);
+        setLoader(false);
       });
     } catch (error) {
-      alert(error.message);
+      setLoader(false);
     }
   }, []);
   const renderGroup = group => (
     <TouchableOpacity
       activeOpacity={1}
-      onPress={() => navigation.navigate('Chat')}>
+      onPress={() => navigation.navigate('Chat', {groupInfo: group})}>
       <Group>
         <Thumbnail>
           <GroupIcon
@@ -67,16 +70,27 @@ export default function Groups({navigation}) {
   );
   return (
     <Container>
-      <FlatList
-        data={groups}
-        renderItem={({item}) => renderGroup(item)}
-        keyExtractor={item => String(item.id)}
-      />
+      {!loader ? (
+        <FlatList
+          data={groups}
+          renderItem={({item}) => renderGroup(item)}
+          keyExtractor={item => String(item.id)}
+        />
+      ) : (
+        <Loader size="large" color={colors.uaStudiosGreen} />
+      )}
     </Container>
   );
 }
 
-const Container = styled.View``;
+const Container = styled.View`
+  flex: 1;
+`;
+const Loader = styled.ActivityIndicator`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Button = styled.TouchableOpacity`
   width: 30px;

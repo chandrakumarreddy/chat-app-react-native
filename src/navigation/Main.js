@@ -13,16 +13,16 @@ const Stack = createStackNavigator();
 function HomeStack() {
   return (
     <Stack.Navigator>
-      {/* <Stack.Screen
+      <Stack.Screen
         name="Signup"
         component={Signup}
         options={{headerShown: false}}
-      /> */}
-      {/* <Stack.Screen
+      />
+      <Stack.Screen
         name="Groups"
         component={Groups}
         options={{title: 'Groups'}}
-      /> */}
+      />
       <Stack.Screen name="Chat" component={Chat} options={{title: 'Chat'}} />
       <Stack.Screen
         name="AddGroup"
