@@ -126,7 +126,8 @@ const Group = styled.View`
   flex-direction: row;
   align-items: center;
   padding: 10px 20px;
-  border: 1px solid ${colors.lighishGray};
+  border-bottom-color: ${colors.lighishGray};
+  border-bottom-width: 1px;
 `;
 
 const GroupName = styled(Text)`
