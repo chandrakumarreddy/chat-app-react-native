@@ -3,6 +3,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
+import Splash from '../screens/Splash';
 import Signup from '../screens/Signup';
 import Groups from '../screens/Groups';
 import Chat from '../screens/Chat';
@@ -13,6 +14,11 @@ const Stack = createStackNavigator();
 function HomeStack() {
   return (
     <Stack.Navigator>
+      <Stack.Screen
+        name="Splash"
+        component={Splash}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="Signup"
         component={Signup}

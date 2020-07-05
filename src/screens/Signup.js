@@ -65,7 +65,13 @@ export default function Signup({navigation}) {
         <Container>
           <StatusBar barStyle="light-content" />
           <Cover>
-            <Title large>Chat App</Title>
+            <Logo
+              source={{
+                uri:
+                  'https://upload.wikimedia.org/wikipedia/commons/6/6b/Meetup_Logo.png',
+              }}
+              resizeMode="contain"
+            />
             <Error small>{error}</Error>
           </Cover>
           <Content>
@@ -104,14 +110,16 @@ const Container = styled.SafeAreaView`
   flex: 1;
   background-color: ${colors.theme};
 `;
+const Logo = styled.Image`
+  width: 100%;
+  height: 300px;
+`;
 
 const Cover = styled.View`
   align-items: center;
   justify-content: center;
   flex: 1;
 `;
-
-const Title = styled(Text)``;
 
 const Content = styled.View`
   align-items: center;

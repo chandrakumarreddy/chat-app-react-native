@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import {firestore} from '../firebase/firebase';
+import firebase, {firestore} from '../firebase/firebase';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 
 import Text from '../shared/Text';
@@ -12,7 +12,11 @@ export default function Groups({navigation}) {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <Button activeOpacity={1} onPress={() => {}}>
+        <Button
+          activeOpacity={1}
+          onPress={() => {
+            firebase.auth().signOut();
+          }}>
           <Image
             source={{
               uri:
